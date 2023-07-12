@@ -1,0 +1,91 @@
+create database sqlproject
+use sqlproject 
+create table artist (artist_id int primary key,artist_name varchar(255),artist_gender varchar(255))  
+insert into artist values(10,"yash","male") 
+insert into artist values(20,"radhika","female") 
+insert into artist values(30,"ranveer","male") 
+insert into artist values(40,"rakshitha","female")
+insert into artist values(50,"punith","male") 
+select * from artist 
+
+create table director(director_id int primary key,director_name varchar(255),director_place varchar(255)) 
+insert into director values (101,"prashanth","benglore") 
+insert into director values (102,"mouli","Andrapradesh") 
+insert into director values (103,"YOGRAJ","mysore") 
+insert into director values (104,"chandru","mandaya") 
+insert into director values (105,"rishabshetty","manglore") 
+select * from director 
+
+create table movie(film_id int primary key,film_name varchar(255),film_year int,film_language varchar(255),director_id int) 
+insert into movie values(201,"kantara",2021,"kannada",105) 
+insert into movie values(202,"padhmavathi",2016,"hindi",101) 
+insert into movie values(203,"jamesbond",2015,"enlish",103) 
+insert into movie values(204,"avengers",2018,"english",102)
+insert into movie values(205,"kantara",2021,"kannada",104) 
+select * from movie  
+
+create table casting(artist_id int,film_id int,character_name varchar(255))
+alter table casting add constraint key4 foreign key(artist_id)references artist(artist_id)
+alter table casting add constraint key5 foreign key(film_id)references movie(film_id) 
+insert into casting values (20,201,"hero") 
+insert into casting values (50,203,"heroin") 
+insert into casting values (10,202,"mother") 
+insert into casting values (40,204,"father") 
+insert into casting values (30,202,"sister") 
+select* from casting 
+
+create table review(film_id int,stars int)
+alter table review add constraint key6 foreign key(film_id)references movie(film_id)
+insert into review values(205,4) 
+insert into review values(202,3) 
+insert into review values(204,1) 
+insert into review values(201,5) 
+insert into review values(202,2) 
+select * from review 
+
+//display the movie releasing ON particular releasing date 
+
+select film_name
+from movie 
+where film_year=2015 
+
+//display all the artist who acted in a film between 2015 and 209 
+
+select a.artist_name,m.film_name,m.film_year
+from artist a,casting c,movie m
+where a.artist_id=c.artist_id and
+ c.film_id=m.film_id and 
+ m.film_year between 2015 and 2017; 
+ 
+ //display the names of all the films whos director is yograj
+ 
+ select film_name 
+ from movie 
+ where director_id=(select director_id 
+                     from director 
+                     where director_name='yograj')   
+                     
+//display names of film with the star recived and sort the results based on stars 
+
+select film_name,REVIEW.stars
+from movie 
+inner join review on movie.film_id=review.film_id order by stars 
+
+//update the star of all film whoes director name is yorjar to 5
+
+update review set stars=5
+where film_id in(select film_id
+                  from movie 
+				  where director_id in(select director_id 
+                                         from director 
+                                         where director_name='yograj')) 
+										
+//display full join for movie and casting 
+
+select*
+from movie 
+left join casting on movie.film_id=casting.film_id
+union all
+select*
+from casting
+right join movie on movie.film_id=casting.film_id
